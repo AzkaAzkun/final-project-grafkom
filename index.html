@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lab Komputer - Soft Lighting</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background-color: #000;
+      }
+      #blocker {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 10;
+      }
+      #instructions {
+        color: #ffffff;
+        text-align: center;
+        cursor: pointer;
+      }
+      #loading {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: black;
+        font-weight: bold;
+        font-size: 16px;
+        z-index: 5;
+        background: rgba(255, 255, 255, 0.8);
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="blocker">
+      <div id="instructions">
+        <span style="font-size: 36px; font-weight: bold">KLIK UNTUK MULAI</span>
+        <p>W, A, S, D untuk Jalan | Mouse untuk Lihat</p>
+      </div>
+    </div>
+    <div id="loading">Memuat Model 3D...</div>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+
+    <script type="module">
+      import { LabScene } from "./scene.js";
+
+      const labScene = new LabScene();
+      labScene.init();
+      labScene.animate();
+    </script>
+  </body>
+</html>
