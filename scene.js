@@ -567,10 +567,37 @@ export class LabScene {
                                 });
                                 modelAc.scale.set(3, 3, 3);
 
-                                document.getElementById("loading").style.display = "none";
-                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                                this.createACs(modelAc);
-                                this.createPlatforms();
+                                // Load Speaker
+                                loader.load(
+                                  "assets/speaker.glb",
+                                  (gltfSpeaker) => {
+                                    const modelSpeaker = gltfSpeaker.scene;
+                                    modelSpeaker.traverse((node) => {
+                                      if (node.isMesh) {
+                                        node.castShadow = true;
+                                        node.receiveShadow = true;
+                                        node.material.metalness = 0.0;
+                                        node.material.roughness = 0.8;
+                                        if (node.material.map) node.material.map.anisotropy = 16;
+                                      }
+                                    });
+                                    modelSpeaker.scale.set(0.5, 0.5, 0.5);
+
+                                    document.getElementById("loading").style.display = "none";
+                                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                    this.createACs(modelAc);
+                                    this.createSpeakers(modelSpeaker);
+                                    this.createPlatforms();
+                                  },
+                                  undefined,
+                                  (error) => {
+                                    console.error("Error loading Speaker:", error);
+                                    document.getElementById("loading").style.display = "none";
+                                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                    this.createACs(modelAc);
+                                    this.createPlatforms();
+                                  }
+                                );
                               },
                               undefined,
                               (error) => {
@@ -762,6 +789,22 @@ export class LabScene {
     acRight2.position.set(9.5, 5, 5);
     acRight2.rotation.y = -Math.PI / 2;
     this.scene.add(acRight2);
+  }
+
+  createSpeakers(modelSpeaker) {
+    if (!modelSpeaker) return;
+
+    // Speaker pojok kiri atas dinding depan
+    const speakerLeft = modelSpeaker.clone();
+    speakerLeft.position.set(-8, 3, -15.8);
+    speakerLeft.rotation.y = 0;
+    this.scene.add(speakerLeft);
+
+    // Speaker pojok kanan atas dinding depan
+    const speakerRight = modelSpeaker.clone();
+    speakerRight.position.set(7.5, 3, -15.8);
+    speakerRight.rotation.y = 0;
+    this.scene.add(speakerRight);
   }
 
   createPlatforms() {
