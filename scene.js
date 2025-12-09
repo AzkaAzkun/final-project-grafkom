@@ -343,7 +343,6 @@ export class LabScene {
       "assets/meja-azka.glb",
       (gltf) => {
         const modelAsli = gltf.scene;
-
         modelAsli.traverse((node) => {
           if (node.isMesh) {
             node.castShadow = true;
@@ -353,7 +352,6 @@ export class LabScene {
             if (node.material.map) node.material.map.anisotropy = 16;
           }
         });
-
         modelAsli.scale.set(1, 1, 1.25);
 
         // Load model kursi
@@ -361,7 +359,6 @@ export class LabScene {
           "assets/kursi.glb",
           (gltfKursi) => {
             const modelKursi = gltfKursi.scene;
-
             modelKursi.traverse((node) => {
               if (node.isMesh) {
                 node.castShadow = true;
@@ -371,7 +368,6 @@ export class LabScene {
                 if (node.material.map) node.material.map.anisotropy = 16;
               }
             });
-
             modelKursi.scale.set(1.25, 1.25, 1.25);
 
             // Load model monitor
@@ -379,7 +375,6 @@ export class LabScene {
               "assets/monitor.glb",
               (gltfMonitor) => {
                 const modelMonitor = gltfMonitor.scene;
-
                 modelMonitor.traverse((node) => {
                   if (node.isMesh) {
                     node.castShadow = true;
@@ -389,7 +384,6 @@ export class LabScene {
                     if (node.material.map) node.material.map.anisotropy = 16;
                   }
                 });
-
                 modelMonitor.scale.set(0.001, 0.001, 0.001);
 
                 // Load model mouse
@@ -397,7 +391,6 @@ export class LabScene {
                   "assets/mouse.glb",
                   (gltfMouse) => {
                     const modelMouse = gltfMouse.scene;
-
                     modelMouse.traverse((node) => {
                       if (node.isMesh) {
                         node.castShadow = true;
@@ -407,18 +400,42 @@ export class LabScene {
                         if (node.material.map) node.material.map.anisotropy = 16;
                       }
                     });
-
                     modelMouse.scale.set(0.015, 0.015, 0.015);
-                    document.getElementById("loading").style.display = "none";
 
-                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse);
-                    this.createPlatforms();
+                    // Load CPU case
+                    loader.load(
+                      "assets/cpu_case.glb",
+                      (gltfCpu) => {
+                        const modelCpu = gltfCpu.scene;
+                        modelCpu.traverse((node) => {
+                          if (node.isMesh) {
+                            node.castShadow = true;
+                            node.receiveShadow = true;
+                            node.material.metalness = 0.0;
+                            node.material.roughness = 0.8;
+                            if (node.material.map) node.material.map.anisotropy = 16;
+                          }
+                        });
+                        modelCpu.scale.set(1.3, 1.3, 1.3);
+
+                        document.getElementById("loading").style.display = "none";
+                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu);
+                        this.createPlatforms();
+                      },
+                      undefined,
+                      (error) => {
+                        console.error("Error loading CPU case:", error);
+                        document.getElementById("loading").style.display = "none";
+                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, null);
+                        this.createPlatforms();
+                      }
+                    );
                   },
                   undefined,
                   (error) => {
                     console.error("Error loading mouse:", error);
                     document.getElementById("loading").style.display = "none";
-                    this.createDesks(modelAsli, modelKursi, modelMonitor, null);
+                    this.createDesks(modelAsli, modelKursi, modelMonitor, null, null);
                     this.createPlatforms();
                   }
                 );
@@ -427,7 +444,7 @@ export class LabScene {
               (error) => {
                 console.error("Error loading monitor:", error);
                 document.getElementById("loading").style.display = "none";
-                this.createDesks(modelAsli, modelKursi, null, null);
+                this.createDesks(modelAsli, modelKursi, null, null, null);
                 this.createPlatforms();
               }
             );
@@ -436,7 +453,7 @@ export class LabScene {
           (error) => {
             console.error("Error loading kursi:", error);
             document.getElementById("loading").style.display = "none";
-            this.createDesks(modelAsli, null, null, null);
+            this.createDesks(modelAsli, null, null, null, null);
             this.createPlatforms();
           }
         );
@@ -453,7 +470,7 @@ export class LabScene {
     );
   }
 
-  createDesks(modelAsli, modelKursi, modelMonitor, modelMouse) {
+  createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu) {
     const rows = 9;
     const colsPerSide = 3;
     const aisleGap = 1.5;
@@ -469,28 +486,32 @@ export class LabScene {
         meja.position.set(x, 0, z + 0.3);
         this.scene.add(meja);
 
-        // Tambahkan kursi
         if (modelKursi) {
           const kursi = modelKursi.clone();
-          kursi.position.set(x, 0, z + 1.2); // Posisi kursi di depan meja
-          kursi.rotation.y = 0; // Menghadap ke meja
+          kursi.position.set(x, 0, z + 1.2);
+          kursi.rotation.y = 0;
           this.scene.add(kursi);
         }
 
-        // Tambahkan monitor di atas meja
         if (modelMonitor) {
           const monitor = modelMonitor.clone();
-          monitor.position.set(x, 1, z); // Posisi center di atas meja
+          monitor.position.set(x, 1, z);
           monitor.rotation.y = -190;
           this.scene.add(monitor);
         }
 
-        // Tambahkan mouse di samping monitor
         if (modelMouse) {
           const mouse = modelMouse.clone();
-          mouse.position.set(x + 0.6, 0.95, z + 0.4); // Posisi di samping kanan monitor
+          mouse.position.set(x + 0.6, 0.95, z + 0.4);
           mouse.rotation.y = 135;
           this.scene.add(mouse);
+        }
+
+        if (modelCpu) {
+          const cpu = modelCpu.clone();
+          cpu.position.set(x + 0.65, 0.0, z + 0.4); // di lantai, sisi kanan bawah meja
+          cpu.rotation.y = 0;
+          this.scene.add(cpu);
         }
       }
     }
@@ -504,28 +525,32 @@ export class LabScene {
         meja.position.set(x, 0, z + 0.3);
         this.scene.add(meja);
 
-        // Tambahkan kursi
         if (modelKursi) {
           const kursi = modelKursi.clone();
-          kursi.position.set(x, 0, z + 1.2); // Posisi kursi di depan meja
-          kursi.rotation.y = 0; // Menghadap ke meja
+          kursi.position.set(x, 0, z + 1.2);
+          kursi.rotation.y = 0;
           this.scene.add(kursi);
         }
 
-        // Tambahkan monitor di atas meja
         if (modelMonitor) {
           const monitor = modelMonitor.clone();
-          monitor.position.set(x, 1, z); // Posisi center di atas meja
+          monitor.position.set(x, 1, z);
           monitor.rotation.y = -190;
           this.scene.add(monitor);
         }
 
-        // Tambahkan mouse di samping monitor
         if (modelMouse) {
           const mouse = modelMouse.clone();
-          mouse.position.set(x + 0.6, 0.95, z + 0.4); // Posisi di samping kanan monitor
+          mouse.position.set(x + 0.6, 0.95, z + 0.4);
           mouse.rotation.y = 135;
           this.scene.add(mouse);
+        }
+
+        if (modelCpu) {
+          const cpu = modelCpu.clone();
+          cpu.position.set(x + 0.65, 0.0, z + 0.4);
+          cpu.rotation.y = 0;
+          this.scene.add(cpu);
         }
       }
     }
