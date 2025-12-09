@@ -373,16 +373,43 @@ export class LabScene {
             });
 
             modelKursi.scale.set(1, 1, 1);
-            document.getElementById("loading").style.display = "none";
 
-            this.createDesks(modelAsli, modelKursi);
-            this.createPlatforms();
+            // Load model monitor
+            loader.load(
+              "assets/monitor.glb",
+              (gltfMonitor) => {
+                const modelMonitor = gltfMonitor.scene;
+
+                modelMonitor.traverse((node) => {
+                  if (node.isMesh) {
+                    node.castShadow = true;
+                    node.receiveShadow = true;
+                    node.material.metalness = 0.0;
+                    node.material.roughness = 0.8;
+                    if (node.material.map) node.material.map.anisotropy = 16;
+                  }
+                });
+
+                modelMonitor.scale.set(0.001, 0.001, 0.001);
+                document.getElementById("loading").style.display = "none";
+
+                this.createDesks(modelAsli, modelKursi, modelMonitor);
+                this.createPlatforms();
+              },
+              undefined,
+              (error) => {
+                console.error("Error loading monitor:", error);
+                document.getElementById("loading").style.display = "none";
+                this.createDesks(modelAsli, modelKursi, null);
+                this.createPlatforms();
+              }
+            );
           },
           undefined,
           (error) => {
             console.error("Error loading kursi:", error);
             document.getElementById("loading").style.display = "none";
-            this.createDesks(modelAsli, null);
+            this.createDesks(modelAsli, null, null);
             this.createPlatforms();
           }
         );
@@ -399,7 +426,7 @@ export class LabScene {
     );
   }
 
-  createDesks(modelAsli, modelKursi) {
+  createDesks(modelAsli, modelKursi, modelMonitor) {
     const rows = 9;
     const colsPerSide = 3;
     const aisleGap = 1.5;
@@ -422,6 +449,14 @@ export class LabScene {
           kursi.rotation.y = 0; // Menghadap ke meja
           this.scene.add(kursi);
         }
+
+        // Tambahkan monitor di atas meja
+        if (modelMonitor) {
+          const monitor = modelMonitor.clone();
+          monitor.position.set(x, 1, z); // Posisi center di atas meja
+          monitor.rotation.y = -190;
+          this.scene.add(monitor);
+        }
       }
     }
 
@@ -440,6 +475,14 @@ export class LabScene {
           kursi.position.set(x, 0, z + 0.8); // Posisi kursi di depan meja
           kursi.rotation.y = 0; // Menghadap ke meja
           this.scene.add(kursi);
+        }
+
+        // Tambahkan monitor di atas meja
+        if (modelMonitor) {
+          const monitor = modelMonitor.clone();
+          monitor.position.set(x, 1, z); // Posisi center di atas meja
+          monitor.rotation.y = -190;
+          this.scene.add(monitor);
         }
       }
     }
