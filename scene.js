@@ -418,15 +418,40 @@ export class LabScene {
                         });
                         modelCpu.scale.set(1.3, 1.3, 1.3);
 
-                        document.getElementById("loading").style.display = "none";
-                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu);
-                        this.createPlatforms();
+                        // Load keyboard
+                        loader.load(
+                          "assets/keyboard.glb",
+                          (gltfKeyboard) => {
+                            const modelKeyboard = gltfKeyboard.scene;
+                            modelKeyboard.traverse((node) => {
+                              if (node.isMesh) {
+                                node.castShadow = true;
+                                node.receiveShadow = true;
+                                node.material.metalness = 0.0;
+                                node.material.roughness = 0.8;
+                                if (node.material.map) node.material.map.anisotropy = 16;
+                              }
+                            });
+                            modelKeyboard.scale.set(0.04, 0.04, 0.04);
+
+                            document.getElementById("loading").style.display = "none";
+                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                            this.createPlatforms();
+                          },
+                          undefined,
+                          (error) => {
+                            console.error("Error loading keyboard:", error);
+                            document.getElementById("loading").style.display = "none";
+                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, null);
+                            this.createPlatforms();
+                          }
+                        );
                       },
                       undefined,
                       (error) => {
                         console.error("Error loading CPU case:", error);
                         document.getElementById("loading").style.display = "none";
-                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, null);
+                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, null, null);
                         this.createPlatforms();
                       }
                     );
@@ -435,7 +460,7 @@ export class LabScene {
                   (error) => {
                     console.error("Error loading mouse:", error);
                     document.getElementById("loading").style.display = "none";
-                    this.createDesks(modelAsli, modelKursi, modelMonitor, null, null);
+                    this.createDesks(modelAsli, modelKursi, modelMonitor, null, null, null);
                     this.createPlatforms();
                   }
                 );
@@ -444,7 +469,7 @@ export class LabScene {
               (error) => {
                 console.error("Error loading monitor:", error);
                 document.getElementById("loading").style.display = "none";
-                this.createDesks(modelAsli, modelKursi, null, null, null);
+                this.createDesks(modelAsli, modelKursi, null, null, null, null);
                 this.createPlatforms();
               }
             );
@@ -453,7 +478,7 @@ export class LabScene {
           (error) => {
             console.error("Error loading kursi:", error);
             document.getElementById("loading").style.display = "none";
-            this.createDesks(modelAsli, null, null, null, null);
+            this.createDesks(modelAsli, null, null, null, null, null);
             this.createPlatforms();
           }
         );
@@ -470,7 +495,7 @@ export class LabScene {
     );
   }
 
-  createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu) {
+  createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard) {
     const rows = 9;
     const colsPerSide = 3;
     const aisleGap = 1.5;
@@ -513,6 +538,13 @@ export class LabScene {
           cpu.rotation.y = 0;
           this.scene.add(cpu);
         }
+
+        if (modelKeyboard) {
+          const keyboard = modelKeyboard.clone();
+          keyboard.position.set(x, 1, z + 0.4);
+          keyboard.rotation.y = 0;
+          this.scene.add(keyboard);
+        }
       }
     }
 
@@ -551,6 +583,13 @@ export class LabScene {
           cpu.position.set(x + 0.65, 0.0, z + 0.4);
           cpu.rotation.y = 0;
           this.scene.add(cpu);
+        }
+
+        if (modelKeyboard) {
+          const keyboard = modelKeyboard.clone();
+          keyboard.position.set(x, 1, z + 0.4);
+          keyboard.rotation.y = 0;
+          this.scene.add(keyboard);
         }
       }
     }
