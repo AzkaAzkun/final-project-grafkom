@@ -354,7 +354,7 @@ export class LabScene {
           }
         });
 
-        modelAsli.scale.set(1, 1, 1);
+        modelAsli.scale.set(1, 1, 1.25);
 
         // Load model kursi
         loader.load(
@@ -466,13 +466,13 @@ export class LabScene {
         const meja = modelAsli.clone();
         const x = -(aisleGap / 2) - c * deskSpacingX - 1.0;
         const z = -10 + r * deskSpacingZ;
-        meja.position.set(x, 0, z);
+        meja.position.set(x, 0, z + 0.3);
         this.scene.add(meja);
 
         // Tambahkan kursi
         if (modelKursi) {
           const kursi = modelKursi.clone();
-          kursi.position.set(x, 0, z + 0.8); // Posisi kursi di depan meja
+          kursi.position.set(x, 0, z + 1.2); // Posisi kursi di depan meja
           kursi.rotation.y = 0; // Menghadap ke meja
           this.scene.add(kursi);
         }
@@ -488,7 +488,7 @@ export class LabScene {
         // Tambahkan mouse di samping monitor
         if (modelMouse) {
           const mouse = modelMouse.clone();
-          mouse.position.set(x + 0.6, 0.95, z + 0.1); // Posisi di samping kanan monitor
+          mouse.position.set(x + 0.6, 0.95, z + 0.4); // Posisi di samping kanan monitor
           mouse.rotation.y = 135;
           this.scene.add(mouse);
         }
@@ -501,13 +501,13 @@ export class LabScene {
         const meja = modelAsli.clone();
         const x = aisleGap / 2 + c * deskSpacingX + 1.0;
         const z = -10 + r * deskSpacingZ;
-        meja.position.set(x, 0, z);
+        meja.position.set(x, 0, z + 0.3);
         this.scene.add(meja);
 
         // Tambahkan kursi
         if (modelKursi) {
           const kursi = modelKursi.clone();
-          kursi.position.set(x, 0, z + 0.8); // Posisi kursi di depan meja
+          kursi.position.set(x, 0, z + 1.2); // Posisi kursi di depan meja
           kursi.rotation.y = 0; // Menghadap ke meja
           this.scene.add(kursi);
         }
@@ -523,7 +523,7 @@ export class LabScene {
         // Tambahkan mouse di samping monitor
         if (modelMouse) {
           const mouse = modelMouse.clone();
-          mouse.position.set(x + 0.6, 0.95, z + 0.1); // Posisi di samping kanan monitor
+          mouse.position.set(x + 0.6, 0.95, z + 0.4); // Posisi di samping kanan monitor
           mouse.rotation.y = 135;
           this.scene.add(mouse);
         }
