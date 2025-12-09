@@ -682,13 +682,43 @@ export class LabScene {
                                             });
                                             modelMejaDosen.scale.set(1, 1, 1);
 
-                                            document.getElementById("loading").style.display = "none";
-                                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                                            this.createACs(modelAc);
-                                            this.createSpeakers(modelSpeaker);
-                                            this.createTVs(modelTv);
-                                            this.createPlatforms();
-                                            this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                            // Load Whiteboard
+                                            loader.load(
+                                              "assets/whiteboard.glb",
+                                              (gltfWhiteboard) => {
+                                                const modelWhiteboard = gltfWhiteboard.scene;
+                                                modelWhiteboard.traverse((node) => {
+                                                  if (node.isMesh) {
+                                                    node.castShadow = true;
+                                                    node.receiveShadow = true;
+                                                    node.material.metalness = 0.0;
+                                                    node.material.roughness = 0.8;
+                                                    if (node.material.map) node.material.map.anisotropy = 16;
+                                                  }
+                                                });
+                                                modelWhiteboard.scale.set(0.8, 0.8, 1);
+
+                                                document.getElementById("loading").style.display = "none";
+                                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                                this.createACs(modelAc);
+                                                this.createSpeakers(modelSpeaker);
+                                                this.createTVs(modelTv);
+                                                this.createPlatforms();
+                                                this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                                this.createWhiteboard(modelWhiteboard);
+                                              },
+                                              undefined,
+                                              (error) => {
+                                                console.error("Error loading Whiteboard:", error);
+                                                document.getElementById("loading").style.display = "none";
+                                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                                this.createACs(modelAc);
+                                                this.createSpeakers(modelSpeaker);
+                                                this.createTVs(modelTv);
+                                                this.createPlatforms();
+                                                this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                              }
+                                            );
                                           },
                                           undefined,
                                           (error) => {
@@ -1019,6 +1049,16 @@ export class LabScene {
     teacherDesk.position.set(4, 0.5, -11.5); // Di atas platform depan
     teacherDesk.rotation.y = -Math.PI;
     this.scene.add(teacherDesk);
+  }
+
+  createWhiteboard(modelWhiteboard) {
+    if (!modelWhiteboard) return;
+
+    // Whiteboard di sisi kiri panggung depan
+    const whiteboard = modelWhiteboard.clone();
+    whiteboard.position.set(-3.5, 0.5, -12.5); // Sisi kiri panggung depan
+    whiteboard.rotation.y = -Math.PI / 4;
+    this.scene.add(whiteboard);
   }
 
   onWindowResize() {
