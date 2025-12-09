@@ -549,7 +549,7 @@ export class LabScene {
                                 if (node.material.map) node.material.map.anisotropy = 16;
                               }
                             });
-                            modelKeyboard.scale.set(0.015, 0.015, 0.015);
+                            modelKeyboard.scale.set(0.04, 0.04, 0.04);
 
                             // Load AC
                             loader.load(
