@@ -160,60 +160,177 @@ export class LabScene {
     backRoomBackWall.receiveShadow = true;
     this.scene.add(backRoomBackWall);
 
-    // Dinding belakang ruangan utama dengan pintu
+    // Material kaca untuk partisi
+    const glassMat = new THREE.MeshPhysicalMaterial({
+      color: 0xaaccdd,
+      metalness: 0.0,
+      roughness: 0.1,
+      transmission: 0.9,
+      thickness: 0.5,
+      transparent: true,
+      opacity: 0.3,
+      side: THREE.DoubleSide,
+    });
+
+    // Material frame aluminium
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: 0xcccccc,
+      metalness: 0.7,
+      roughness: 0.3,
+    });
+
+    // Dinding belakang ruangan utama dengan pintu (KACA)
     const mainBackWallWidth = (backRoomWidth - doorWidth * 2 - sekatWidth) / 2;
 
-    const mainBackWallLeft = new THREE.Mesh(
+    // Kaca kiri
+    const glassLeft = new THREE.Mesh(
       new THREE.PlaneGeometry(mainBackWallWidth, wallHeight),
-      wallMat
+      glassMat
     );
-    mainBackWallLeft.position.set(
+    glassLeft.position.set(
       -backRoomWidth / 2 + mainBackWallWidth / 2,
       wallHeight / 2,
       floorH / 2
     );
-    mainBackWallLeft.receiveShadow = true;
-    this.scene.add(mainBackWallLeft);
+    glassLeft.receiveShadow = true;
+    glassLeft.castShadow = true;
+    this.scene.add(glassLeft);
 
-    const mainBackWallRight = new THREE.Mesh(
-      new THREE.PlaneGeometry(mainBackWallWidth, wallHeight),
-      wallMat
+    // Frame kiri
+    const frameLeftTop = new THREE.Mesh(
+      new THREE.BoxGeometry(mainBackWallWidth, 0.1, 0.05),
+      frameMat
     );
-    mainBackWallRight.position.set(
+    frameLeftTop.position.set(
+      -backRoomWidth / 2 + mainBackWallWidth / 2,
+      wallHeight,
+      floorH / 2
+    );
+    this.scene.add(frameLeftTop);
+
+    const frameLeftBottom = new THREE.Mesh(
+      new THREE.BoxGeometry(mainBackWallWidth, 0.1, 0.05),
+      frameMat
+    );
+    frameLeftBottom.position.set(
+      -backRoomWidth / 2 + mainBackWallWidth / 2,
+      0,
+      floorH / 2
+    );
+    this.scene.add(frameLeftBottom);
+
+    // Kaca kanan
+    const glassRight = new THREE.Mesh(
+      new THREE.PlaneGeometry(mainBackWallWidth, wallHeight),
+      glassMat
+    );
+    glassRight.position.set(
       backRoomWidth / 2 - mainBackWallWidth / 2,
       wallHeight / 2,
       floorH / 2
     );
-    mainBackWallRight.receiveShadow = true;
-    this.scene.add(mainBackWallRight);
+    glassRight.receiveShadow = true;
+    glassRight.castShadow = true;
+    this.scene.add(glassRight);
 
-    // Dinding atas pintu kiri
-    const mainDoorLeftTop = new THREE.Mesh(
-      new THREE.PlaneGeometry(doorWidth, wallHeight - 2.2),
-      wallMat
+    // Frame kanan
+    const frameRightTop = new THREE.Mesh(
+      new THREE.BoxGeometry(mainBackWallWidth, 0.1, 0.05),
+      frameMat
     );
-    mainDoorLeftTop.position.set(
+    frameRightTop.position.set(
+      backRoomWidth / 2 - mainBackWallWidth / 2,
+      wallHeight,
+      floorH / 2
+    );
+    this.scene.add(frameRightTop);
+
+    const frameRightBottom = new THREE.Mesh(
+      new THREE.BoxGeometry(mainBackWallWidth, 0.1, 0.05),
+      frameMat
+    );
+    frameRightBottom.position.set(
+      backRoomWidth / 2 - mainBackWallWidth / 2,
+      0,
+      floorH / 2
+    );
+    this.scene.add(frameRightBottom);
+
+    // Kaca atas pintu kiri
+    const glassDoorLeftTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(doorWidth, wallHeight - 2.2),
+      glassMat
+    );
+    glassDoorLeftTop.position.set(
       -sekatWidth / 2 - doorWidth / 2,
       wallHeight - (wallHeight - 2.2) / 2,
       floorH / 2
     );
-    mainDoorLeftTop.receiveShadow = true;
-    this.scene.add(mainDoorLeftTop);
+    glassDoorLeftTop.receiveShadow = true;
+    glassDoorLeftTop.castShadow = true;
+    this.scene.add(glassDoorLeftTop);
 
-    // Dinding atas pintu kanan
-    const mainDoorRightTop = new THREE.Mesh(
-      new THREE.PlaneGeometry(doorWidth, wallHeight - 2.2),
-      wallMat
+    // Frame pintu kiri
+    const frameDoorLeftTop = new THREE.Mesh(
+      new THREE.BoxGeometry(doorWidth, 0.1, 0.05),
+      frameMat
     );
-    mainDoorRightTop.position.set(
+    frameDoorLeftTop.position.set(
+      -sekatWidth / 2 - doorWidth / 2,
+      wallHeight,
+      floorH / 2
+    );
+    this.scene.add(frameDoorLeftTop);
+
+    const frameDoorLeftMiddle = new THREE.Mesh(
+      new THREE.BoxGeometry(doorWidth, 0.1, 0.05),
+      frameMat
+    );
+    frameDoorLeftMiddle.position.set(
+      -sekatWidth / 2 - doorWidth / 2,
+      2.2,
+      floorH / 2
+    );
+    this.scene.add(frameDoorLeftMiddle);
+
+    // Kaca atas pintu kanan
+    const glassDoorRightTop = new THREE.Mesh(
+      new THREE.PlaneGeometry(doorWidth, wallHeight - 2.2),
+      glassMat
+    );
+    glassDoorRightTop.position.set(
       sekatWidth / 2 + doorWidth / 2,
       wallHeight - (wallHeight - 2.2) / 2,
       floorH / 2
     );
-    mainDoorRightTop.receiveShadow = true;
-    this.scene.add(mainDoorRightTop);
+    glassDoorRightTop.receiveShadow = true;
+    glassDoorRightTop.castShadow = true;
+    this.scene.add(glassDoorRightTop);
 
-    // SEKAT TENGAH
+    // Frame pintu kanan
+    const frameDoorRightTop = new THREE.Mesh(
+      new THREE.BoxGeometry(doorWidth, 0.1, 0.05),
+      frameMat
+    );
+    frameDoorRightTop.position.set(
+      sekatWidth / 2 + doorWidth / 2,
+      wallHeight,
+      floorH / 2
+    );
+    this.scene.add(frameDoorRightTop);
+
+    const frameDoorRightMiddle = new THREE.Mesh(
+      new THREE.BoxGeometry(doorWidth, 0.1, 0.05),
+      frameMat
+    );
+    frameDoorRightMiddle.position.set(
+      sekatWidth / 2 + doorWidth / 2,
+      2.2,
+      floorH / 2
+    );
+    this.scene.add(frameDoorRightMiddle);
+
+    // SEKAT TENGAH (tetap solid)
     const sekatMat = new THREE.MeshStandardMaterial({
       color: 0xe0e0e0,
       side: THREE.DoubleSide,
