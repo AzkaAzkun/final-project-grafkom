@@ -666,12 +666,43 @@ export class LabScene {
                                         });
                                         modelTv.scale.set(0.05, 0.05, 0.05);
 
-                                        document.getElementById("loading").style.display = "none";
-                                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                                        this.createACs(modelAc);
-                                        this.createSpeakers(modelSpeaker);
-                                        this.createTVs(modelTv);
-                                        this.createPlatforms();
+                                        // Load Meja Dosen
+                                        loader.load(
+                                          "assets/Meja-dosen.glb",
+                                          (gltfMejaDosen) => {
+                                            const modelMejaDosen = gltfMejaDosen.scene;
+                                            modelMejaDosen.traverse((node) => {
+                                              if (node.isMesh) {
+                                                node.castShadow = true;
+                                                node.receiveShadow = true;
+                                                node.material.metalness = 0.0;
+                                                node.material.roughness = 0.8;
+                                                if (node.material.map) node.material.map.anisotropy = 16;
+                                              }
+                                            });
+                                            modelMejaDosen.scale.set(1, 1, 1);
+
+                                            document.getElementById("loading").style.display = "none";
+                                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                            this.createACs(modelAc);
+                                            this.createSpeakers(modelSpeaker);
+                                            this.createTVs(modelTv);
+                                            this.createPlatforms();
+                                            this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                          },
+                                          undefined,
+                                          (error) => {
+                                            console.error("Error loading Meja Dosen:", error);
+                                            document.getElementById("loading").style.display = "none";
+                                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                            this.createACs(modelAc);
+                                            this.createSpeakers(modelSpeaker);
+                                            this.createTVs(modelTv);
+                                            this.createPlatforms();
+                                            // Fallback ke meja mahasiswa jika meja dosen gagal load
+                                            this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
+                                          }
+                                        );
                                       },
                                       undefined,
                                       (error) => {
@@ -681,6 +712,7 @@ export class LabScene {
                                         this.createACs(modelAc);
                                         this.createSpeakers(modelSpeaker);
                                         this.createPlatforms();
+                                        this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                                       }
                                     );
                                   },
@@ -691,6 +723,7 @@ export class LabScene {
                                     this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
                                     this.createACs(modelAc);
                                     this.createPlatforms();
+                                    this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                                   }
                                 );
                               },
@@ -700,6 +733,7 @@ export class LabScene {
                                 document.getElementById("loading").style.display = "none";
                                 this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
                                 this.createPlatforms();
+                                this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                               }
                             );
                           },
@@ -709,6 +743,7 @@ export class LabScene {
                             document.getElementById("loading").style.display = "none";
                             this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, null);
                             this.createPlatforms();
+                            this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                           }
                         );
                       },
@@ -718,6 +753,7 @@ export class LabScene {
                         document.getElementById("loading").style.display = "none";
                         this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, null, null);
                         this.createPlatforms();
+                        this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                       }
                     );
                   },
@@ -727,6 +763,7 @@ export class LabScene {
                     document.getElementById("loading").style.display = "none";
                     this.createDesks(modelAsli, modelKursi, modelMonitor, null, null, null);
                     this.createPlatforms();
+                    this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
                   }
                 );
               },
@@ -736,6 +773,7 @@ export class LabScene {
                 document.getElementById("loading").style.display = "none";
                 this.createDesks(modelAsli, modelKursi, null, null, null, null);
                 this.createPlatforms();
+                this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
               }
             );
           },
@@ -745,6 +783,7 @@ export class LabScene {
             document.getElementById("loading").style.display = "none";
             this.createDesks(modelAsli, null, null, null, null, null);
             this.createPlatforms();
+            this.createTeacherDesk(modelAsli, modelKursi, modelMonitor, modelKeyboard);
           }
         );
       },
@@ -970,6 +1009,16 @@ export class LabScene {
     frontPlatformMini.receiveShadow = true;
     frontPlatformMini.castShadow = true;
     this.scene.add(frontPlatformMini);
+  }
+
+  createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard) {
+    if (!modelMejaDosen) return;
+
+    // Meja dosen di panggung depan
+    const teacherDesk = modelMejaDosen.clone();
+    teacherDesk.position.set(4, 0.5, -11.5); // Di atas platform depan
+    teacherDesk.rotation.y = -Math.PI;
+    this.scene.add(teacherDesk);
   }
 
   onWindowResize() {
