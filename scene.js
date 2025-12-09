@@ -119,6 +119,73 @@ export class LabScene {
     frontWall.position.set(0, wallHeight / 2, -floorH / 2);
     frontWall.receiveShadow = true;
     this.scene.add(frontWall);
+
+    // === TEMBOK UNTUK TV (KIRI DAN KANAN) - DIANTARA AC ===
+    const tvWallDepth = 1.5;  // Kedalaman tembok dari dinding depan
+    const tvWallWidth = 2.5;   // Lebar tembok
+    
+    // AC berada di z = -5 dan z = 5, jadi tembok ada di tengah (z = 0)
+    const tvWallZPosition = 0;  // Posisi Z tembok (diantara kedua AC)
+
+    // Tembok kiri untuk TV (tegak lurus dengan dinding samping)
+    const tvWallLeft = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, wallHeight, tvWallDepth),
+      wallMat
+    );
+    tvWallLeft.position.set(-floorW / 2 + tvWallDepth, wallHeight / 2, tvWallZPosition);
+    tvWallLeft.receiveShadow = true;
+    tvWallLeft.castShadow = true;
+    this.scene.add(tvWallLeft);
+
+    // Tembok ujung kiri (menghadap ke dalam ruangan)
+    const tvWallLeftFront = new THREE.Mesh(
+      new THREE.BoxGeometry(tvWallDepth, wallHeight, 0.2),
+      wallMat
+    );
+    tvWallLeftFront.position.set(-floorW / 2 + tvWallDepth / 2, wallHeight / 2, tvWallZPosition + tvWallDepth / 2);
+    tvWallLeftFront.receiveShadow = true;
+    tvWallLeftFront.castShadow = true;
+    this.scene.add(tvWallLeftFront);
+
+    // Tembok belakang kiri (menghubungkan ke dinding samping)
+    const tvWallLeftBack = new THREE.Mesh(
+      new THREE.BoxGeometry(tvWallDepth, wallHeight, 0.2),
+      wallMat
+    );
+    tvWallLeftBack.position.set(-floorW / 2 + tvWallDepth / 2, wallHeight / 2, tvWallZPosition - tvWallDepth / 2);
+    tvWallLeftBack.receiveShadow = true;
+    tvWallLeftBack.castShadow = true;
+    this.scene.add(tvWallLeftBack);
+
+    // Tembok kanan untuk TV (tegak lurus dengan dinding samping)
+    const tvWallRight = new THREE.Mesh(
+      new THREE.BoxGeometry(0.2, wallHeight, tvWallDepth),
+      wallMat
+    );
+    tvWallRight.position.set(floorW / 2 - tvWallDepth, wallHeight / 2, tvWallZPosition);
+    tvWallRight.receiveShadow = true;
+    tvWallRight.castShadow = true;
+    this.scene.add(tvWallRight);
+
+    // Tembok ujung kanan (menghadap ke dalam ruangan)
+    const tvWallRightFront = new THREE.Mesh(
+      new THREE.BoxGeometry(tvWallDepth, wallHeight, 0.2),
+      wallMat
+    );
+    tvWallRightFront.position.set(floorW / 2 - tvWallDepth / 2, wallHeight / 2, tvWallZPosition + tvWallDepth / 2);
+    tvWallRightFront.receiveShadow = true;
+    tvWallRightFront.castShadow = true;
+    this.scene.add(tvWallRightFront);
+
+    // Tembok belakang kanan (menghubungkan ke dinding samping)
+    const tvWallRightBack = new THREE.Mesh(
+      new THREE.BoxGeometry(tvWallDepth, wallHeight, 0.2),
+      wallMat
+    );
+    tvWallRightBack.position.set(floorW / 2 - tvWallDepth / 2, wallHeight / 2, tvWallZPosition - tvWallDepth / 2);
+    tvWallRightBack.receiveShadow = true;
+    tvWallRightBack.castShadow = true;
+    this.scene.add(tvWallRightBack);
   }
 
   buildBackRoom(floorW, floorH, wallHeight, floorMat, wallMat) {
