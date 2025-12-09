@@ -549,11 +549,37 @@ export class LabScene {
                                 if (node.material.map) node.material.map.anisotropy = 16;
                               }
                             });
-                            modelKeyboard.scale.set(0.04, 0.04, 0.04);
+                            modelKeyboard.scale.set(0.015, 0.015, 0.015);
 
-                            document.getElementById("loading").style.display = "none";
-                            this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                            this.createPlatforms();
+                            // Load AC
+                            loader.load(
+                              "assets/ac.glb",
+                              (gltfAc) => {
+                                const modelAc = gltfAc.scene;
+                                modelAc.traverse((node) => {
+                                  if (node.isMesh) {
+                                    node.castShadow = true;
+                                    node.receiveShadow = true;
+                                    node.material.metalness = 0.0;
+                                    node.material.roughness = 0.8;
+                                    if (node.material.map) node.material.map.anisotropy = 16;
+                                  }
+                                });
+                                modelAc.scale.set(3, 3, 3);
+
+                                document.getElementById("loading").style.display = "none";
+                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                this.createACs(modelAc);
+                                this.createPlatforms();
+                              },
+                              undefined,
+                              (error) => {
+                                console.error("Error loading AC:", error);
+                                document.getElementById("loading").style.display = "none";
+                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                this.createPlatforms();
+                              }
+                            );
                           },
                           undefined,
                           (error) => {
@@ -710,6 +736,32 @@ export class LabScene {
         }
       }
     }
+  }
+
+  createACs(modelAc) {
+    if (!modelAc) return;
+
+    // AC di dinding kiri
+    const acLeft1 = modelAc.clone();
+    acLeft1.position.set(-9.5, 5, -5);
+    acLeft1.rotation.y = Math.PI / 2;
+    this.scene.add(acLeft1);
+
+    const acLeft2 = modelAc.clone();
+    acLeft2.position.set(-9.5, 5, 5);
+    acLeft2.rotation.y = Math.PI / 2;
+    this.scene.add(acLeft2);
+
+    // AC di dinding kanan
+    const acRight1 = modelAc.clone();
+    acRight1.position.set(9.5, 5, -5);
+    acRight1.rotation.y = -Math.PI / 2;
+    this.scene.add(acRight1);
+
+    const acRight2 = modelAc.clone();
+    acRight2.position.set(9.5, 5, 5);
+    acRight2.rotation.y = -Math.PI / 2;
+    this.scene.add(acRight2);
   }
 
   createPlatforms() {
