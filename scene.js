@@ -698,14 +698,45 @@ export class LabScene {
                                                 });
                                                 modelWhiteboard.scale.set(0.8, 0.8, 1);
 
-                                                document.getElementById("loading").style.display = "none";
-                                                this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                                                this.createACs(modelAc);
-                                                this.createSpeakers(modelSpeaker);
-                                                this.createTVs(modelTv);
-                                                this.createPlatforms();
-                                                this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
-                                                this.createWhiteboard(modelWhiteboard);
+                                                // Load Screen Projector
+                                                loader.load(
+                                                  "assets/screen_projector.glb",
+                                                  (gltfScreenProjector) => {
+                                                    const modelScreenProjector = gltfScreenProjector.scene;
+                                                    modelScreenProjector.traverse((node) => {
+                                                      if (node.isMesh) {
+                                                        node.castShadow = true;
+                                                        node.receiveShadow = true;
+                                                        node.material.metalness = 0.0;
+                                                        node.material.roughness = 0.8;
+                                                        if (node.material.map) node.material.map.anisotropy = 16;
+                                                      }
+                                                    });
+                                                    modelScreenProjector.scale.set(1, 1.25, 0.75);
+
+                                                    document.getElementById("loading").style.display = "none";
+                                                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                                    this.createACs(modelAc);
+                                                    this.createSpeakers(modelSpeaker);
+                                                    this.createTVs(modelTv);
+                                                    this.createPlatforms();
+                                                    this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                                    this.createWhiteboard(modelWhiteboard);
+                                                    this.createScreenProjector(modelScreenProjector);
+                                                  },
+                                                  undefined,
+                                                  (error) => {
+                                                    console.error("Error loading Screen Projector:", error);
+                                                    document.getElementById("loading").style.display = "none";
+                                                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                                    this.createACs(modelAc);
+                                                    this.createSpeakers(modelSpeaker);
+                                                    this.createTVs(modelTv);
+                                                    this.createPlatforms();
+                                                    this.createTeacherDesk(modelMejaDosen, modelKursi, modelMonitor, modelKeyboard);
+                                                    this.createWhiteboard(modelWhiteboard);
+                                                  }
+                                                );
                                               },
                                               undefined,
                                               (error) => {
@@ -1059,6 +1090,16 @@ export class LabScene {
     whiteboard.position.set(-3.5, 0.5, -12.5); // Sisi kiri panggung depan
     whiteboard.rotation.y = -Math.PI / 4;
     this.scene.add(whiteboard);
+  }
+
+  createScreenProjector(modelScreenProjector) {
+    if (!modelScreenProjector) return;
+
+    // Screen projector di dinding depan bagian tengah
+    const screenProjector = modelScreenProjector.clone();
+    screenProjector.position.set(0, 5.5, -15.8); // Dinding depan bagian tengah, posisi tinggi
+    screenProjector.rotation.y = -Math.PI / 2;
+    this.scene.add(screenProjector);
   }
 
   onWindowResize() {
