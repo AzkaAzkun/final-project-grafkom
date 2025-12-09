@@ -338,6 +338,7 @@ export class LabScene {
   loadModels() {
     const loader = new GLTFLoader();
 
+    // Load model meja
     loader.load(
       "assets/meja-azka.glb",
       (gltf) => {
@@ -354,10 +355,37 @@ export class LabScene {
         });
 
         modelAsli.scale.set(1, 1, 1);
-        document.getElementById("loading").style.display = "none";
 
-        this.createDesks(modelAsli);
-        this.createPlatforms();
+        // Load model kursi
+        loader.load(
+          "assets/kursi.glb",
+          (gltfKursi) => {
+            const modelKursi = gltfKursi.scene;
+
+            modelKursi.traverse((node) => {
+              if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+                node.material.metalness = 0.0;
+                node.material.roughness = 0.8;
+                if (node.material.map) node.material.map.anisotropy = 16;
+              }
+            });
+
+            modelKursi.scale.set(1, 1, 1);
+            document.getElementById("loading").style.display = "none";
+
+            this.createDesks(modelAsli, modelKursi);
+            this.createPlatforms();
+          },
+          undefined,
+          (error) => {
+            console.error("Error loading kursi:", error);
+            document.getElementById("loading").style.display = "none";
+            this.createDesks(modelAsli, null);
+            this.createPlatforms();
+          }
+        );
       },
       undefined,
       (error) => {
@@ -371,7 +399,7 @@ export class LabScene {
     );
   }
 
-  createDesks(modelAsli) {
+  createDesks(modelAsli, modelKursi) {
     const rows = 9;
     const colsPerSide = 3;
     const aisleGap = 1.5;
@@ -386,6 +414,14 @@ export class LabScene {
         const z = -10 + r * deskSpacingZ;
         meja.position.set(x, 0, z);
         this.scene.add(meja);
+
+        // Tambahkan kursi
+        if (modelKursi) {
+          const kursi = modelKursi.clone();
+          kursi.position.set(x, 0, z + 0.8); // Posisi kursi di depan meja
+          kursi.rotation.y = 0; // Menghadap ke meja
+          this.scene.add(kursi);
+        }
       }
     }
 
@@ -397,6 +433,14 @@ export class LabScene {
         const z = -10 + r * deskSpacingZ;
         meja.position.set(x, 0, z);
         this.scene.add(meja);
+
+        // Tambahkan kursi
+        if (modelKursi) {
+          const kursi = modelKursi.clone();
+          kursi.position.set(x, 0, z + 0.8); // Posisi kursi di depan meja
+          kursi.rotation.y = 0; // Menghadap ke meja
+          this.scene.add(kursi);
+        }
       }
     }
   }
