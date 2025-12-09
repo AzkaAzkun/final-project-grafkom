@@ -650,11 +650,39 @@ export class LabScene {
                                     });
                                     modelSpeaker.scale.set(0.5, 0.5, 0.5);
 
-                                    document.getElementById("loading").style.display = "none";
-                                    this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
-                                    this.createACs(modelAc);
-                                    this.createSpeakers(modelSpeaker);
-                                    this.createPlatforms();
+                                    // Load TV Screen
+                                    loader.load(
+                                      "assets/tv_screen.glb",
+                                      (gltfTv) => {
+                                        const modelTv = gltfTv.scene;
+                                        modelTv.traverse((node) => {
+                                          if (node.isMesh) {
+                                            node.castShadow = true;
+                                            node.receiveShadow = true;
+                                            node.material.metalness = 0.0;
+                                            node.material.roughness = 0.8;
+                                            if (node.material.map) node.material.map.anisotropy = 16;
+                                          }
+                                        });
+                                        modelTv.scale.set(0.05, 0.05, 0.05);
+
+                                        document.getElementById("loading").style.display = "none";
+                                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                        this.createACs(modelAc);
+                                        this.createSpeakers(modelSpeaker);
+                                        this.createTVs(modelTv);
+                                        this.createPlatforms();
+                                      },
+                                      undefined,
+                                      (error) => {
+                                        console.error("Error loading TV Screen:", error);
+                                        document.getElementById("loading").style.display = "none";
+                                        this.createDesks(modelAsli, modelKursi, modelMonitor, modelMouse, modelCpu, modelKeyboard);
+                                        this.createACs(modelAc);
+                                        this.createSpeakers(modelSpeaker);
+                                        this.createPlatforms();
+                                      }
+                                    );
                                   },
                                   undefined,
                                   (error) => {
@@ -872,6 +900,29 @@ export class LabScene {
     speakerRight.position.set(7.5, 3, -15.8);
     speakerRight.rotation.y = 0;
     this.scene.add(speakerRight);
+  }
+
+  createTVs(modelTv) {
+    if (!modelTv) return;
+
+    const floorW = 19.5;
+    const tvWallDepth = 1.5;
+    const wallThickness = 0.2; // same as wall thickness
+    const tvHeight = 4.5;
+    const tvZ = 0;
+    const offset = wallThickness / 2 + 0.05; // slight float off the wall
+
+    // TV di tembok menonjol kiri, menghadap ke dalam
+    const tvLeft = modelTv.clone();
+    tvLeft.position.set(-floorW / 2 + tvWallDepth + offset, tvHeight + 1, tvZ + 0.82);
+    tvLeft.rotation.y = Math.PI / 5;
+    this.scene.add(tvLeft);
+
+    // TV di tembok menonjol kanan, menghadap ke dalam
+    const tvRight = modelTv.clone();
+    tvRight.position.set(floorW / 2 - tvWallDepth - offset, tvHeight + 1, tvZ + 0.82);
+    tvRight.rotation.y = -Math.PI / 5;
+    this.scene.add(tvRight);
   }
 
   createPlatforms() {
